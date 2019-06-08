@@ -3,7 +3,7 @@
 		((= N 0) 
 			0
 		)
-		((esPrimoShell(N)) 
+		((esPrimoShell N) 
 			(+ N (sumaPrimos (- N 1)))
 		)
 		(T 
@@ -34,7 +34,7 @@
 			)
 		)
 		(T
-			NIL
+			T
 		)
 	)
 )

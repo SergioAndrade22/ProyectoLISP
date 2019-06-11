@@ -5,7 +5,7 @@
 		((LISTP M) ; primero se verifica que M sea efectivamente una lista
 			(COND
 				((NOT (LISTP (CAR M))) ; luego se verifica que M sea una representacion valida de una matriz
-					"La lista ingresada no es una matriz."
+					"ERROR: La lista ingresada no es una matriz."
 				)
 				((NULL (CDR M)) ; si M es una matriz de una unica fila, la traspuesta de M es M
 					M
@@ -26,7 +26,7 @@
 			)
 		)
 		(T ; en caso de que M no fuera una lista esta funcion no tiene sentido alguno
-			"Esta funcion fue implementada para operar sobre matrices representadas como lista de listas."
+			"ERROR: Esta funcion fue implementada para operar sobre matrices representadas como lista de listas."
 		)
 	)
 )
@@ -54,14 +54,17 @@
 		)
 	)
 )
-;-------------------------------------------EJERCICIO SUMAPRIMOS-------------------------------------------
+;-------------------------------------------EJERCICIO SUMA DE PRIMOS-------------------------------------------
 ; Función que calcula la suma de todos los números naturales primos hasta un N dado. Hasta un N = 3352
 (DEFUN sumaPrimos (N)
 	(COND
 		((INTEGERP N)
 			(COND
+				((> N 3352)
+					"EROR: el numero suministrado supera el limite de ejecucion del programa"
+				)
 				((< N 0) ; el programa no considera la suma de numeros primos en "sentido negativo"
-					"Esta funcion espera recibir como argumento un entero mayor o igual a 0."
+					"ERROR: Esta funcion espera recibir como argumento un entero mayor o igual a 0."
 				)
 				((= N 0)  ; si N es 0, corta la recursión se devuelve 0
 					0
@@ -74,8 +77,8 @@
 				)
 			)
 		)
-		(T
-			"Esta funcion fue implementada para operar sobre enteros."
+		(T ; si el parametro siministrado no es un entero no se puede saber hasta que numero calcular los primos
+			"ERROR: Esta funcion fue implementada para operar sobre enteros."
 		)
 	)
 )
@@ -104,6 +107,83 @@
 		)
 		(T ; llega el caso en que B >= N por lo que N es primo
 			T
+		)
+	)
+)
+
+;-------------------------------------------EJERCICIO PERMUTACION LEXICA-------------------------------------------
+; Funcion que calcula la permutacion lexica de una lista L suministrada por parametro. Se asume que L se encuentra ordenada lexicograficamente
+(DEFUN permLex (L)
+	(COND
+		((NOT(LISTP L)) ; si L no es una lista esta funcion no tiene razon de ejecutarse
+			"ERROR: se espera recibir una lista como dato de entrada."
+		)
+		((NULL L)
+			NIL
+		)
+		(T
+			(permutar L L)
+		)
+	)
+)
+
+(DEFUN permutar (L L2)
+	(COND
+		((NULL L)
+			NIL
+		)
+		(T
+			(LET ((A L2))
+				(LET ((N (LIST-LENGTH (DELETE (CAR L) A))))
+					(APPEND 
+						(concatenarMulti 
+							(CAR L) 
+							(rightShifts (DELETE (CAR L) A) (- N 1))
+						)
+						(permutar
+							(CDR L)
+							L2
+						)
+					)
+				)
+			)
+		)
+	)
+)
+
+(DEFUN concatenarMulti (A L)
+	(COND
+		((NULL (CDR L))
+			(LIST (CONS A (CAR L)))
+		)
+		(T
+			(CONS (CONS A (CAR L)) (concatenarMulti A (CDR L)))
+		)
+	)
+)
+
+(DEFUN rightShifts (L N)
+	(COND
+		((= N 0)
+			(LIST L)
+		)
+		(T
+			(LET ((SL (Shift L)))
+				(APPEND (LIST L) (rightShifts SL (- N 1)))
+			)
+		)
+	)
+)
+
+(DEFUN shift (L)
+	(COND
+		((= (LIST-LENGTH L) 0)
+			NIL
+		)
+		(T
+			(LET ((RL (REVERSE L)))
+				(CONS (CAR RL) (REVERSE (CDR RL)))
+			)
 		)
 	)
 )

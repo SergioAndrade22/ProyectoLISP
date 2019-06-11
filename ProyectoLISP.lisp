@@ -1,5 +1,5 @@
 ;-------------------------------------------EJERCICIO MATRIZ TRASPUESTA------------------------------------------
-; F-uncion que computa la traspuesta de una matriz representado como una lista de listas
+; Funcion que computa la traspuesta de una matriz representado como una lista de listas
 (DEFUN trans (M)
 	(COND
 		((LISTP M) ; primero se verifica que M sea efectivamente una lista

@@ -141,7 +141,7 @@
 			NIL
 		)
 		(T
-			(APPEND (addToALL (CAR L1) (permLex (DELETE (CAR L1) L2))) (permute (CDR L1) (rearrange (CAR L1) L2)))
+			(APPEND (addToALL (CAR L1) (permLex (DELETE (CAR L1) L2))) (permute (CDR L1) (addLast (CAR L1) (DELETE (CAR L1) L2))))
 		)
 	)
 )
@@ -157,6 +157,13 @@
 	)
 )
 
-(DEFUN rearrange (E L)
-	(REVERSE (CONS E (REVERSE (DELETE E L))))
+(DEFUN addLast (E L)
+	(COND
+		((= (LIST-LENGTH L) 0)
+			(LIST E)
+		)
+		(T
+			(CONS (CAR L) (addLast E (CDR L)))
+		)
+	)
 )

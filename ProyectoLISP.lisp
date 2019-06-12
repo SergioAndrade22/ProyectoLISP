@@ -110,80 +110,53 @@
 		)
 	)
 )
-
 ;-------------------------------------------EJERCICIO PERMUTACION LEXICA-------------------------------------------
 ; Funcion que calcula la permutacion lexica de una lista L suministrada por parametro. Se asume que L se encuentra ordenada lexicograficamente
 (DEFUN permLex (L)
 	(COND
-		((NOT(LISTP L)) ; si L no es una lista esta funcion no tiene razon de ejecutarse
-			"ERROR: se espera recibir una lista como dato de entrada."
-		)
-		((NULL L)
-			NIL
-		)
-		(T
-			(permutar L L)
-		)
-	)
-)
-
-(DEFUN permutar (L L2)
-	(COND
-		((NULL L)
-			NIL
-		)
-		(T
-			(LET ((A L2))
-				(LET ((N (LIST-LENGTH (DELETE (CAR L) A))))
-					(APPEND 
-						(concatenarMulti 
-							(CAR L) 
-							(rightShifts (DELETE (CAR L) A) (- N 1))
-						)
-						(permutar
-							(CDR L)
-							L2
-						)
-					)
+		((LISTP L)
+			(COND
+				((NULL L)
+					NIL
+				)
+				((= 1 (LIST-LENGTH L))
+					(LIST L)
+				)
+				(T
+					(permute L L)
 				)
 			)
 		)
+		(T
+			"ERROR: Esta funcion espera recibir por parametro una lista."
+		)
 	)
 )
 
-(DEFUN concatenarMulti (A L)
+;L1 es la lista de elementos que restan permutar
+;L2 es la lista real con todos los elementos
+(DEFUN permute (L1 L2)
 	(COND
-		((NULL (CDR L))
-			(LIST (CONS A (CAR L)))
+		((= (LIST-LENGTH L1) 0)
+			NIL
 		)
 		(T
-			(CONS (CONS A (CAR L)) (concatenarMulti A (CDR L)))
+			(APPEND (addToALL (CAR L1) (permLex (DELETE (CAR L1) L2))) (permute (CDR L1) (rearrange (CAR L1) L2)))
 		)
 	)
 )
 
-(DEFUN rightShifts (L N)
-	(COND
-		((= N 0)
-			(LIST L)
-		)
-		(T
-			(LET ((SL (Shift L)))
-				(APPEND (LIST L) (rightShifts SL (- N 1)))
-			)
-		)
-	)
-)
-
-(DEFUN shift (L)
+(DEFUN addToALL (E L)
 	(COND
 		((= (LIST-LENGTH L) 0)
 			NIL
 		)
 		(T
-			(LET ((RL (REVERSE L)))
-				(CONS (CAR RL) (REVERSE (CDR RL)))
-			)
+			(CONS (CONS E (CAR L)) (addToALL E (CDR L)))
 		)
 	)
+)
+
+(DEFUN rearrange (E L)
+	(REVERSE (CONS E (REVERSE (DELETE E L))))
 )

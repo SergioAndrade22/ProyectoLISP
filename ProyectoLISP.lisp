@@ -88,9 +88,6 @@
 	(COND
 		((INTEGERP N) ; ejecucion valida solo si N es un integer
 			(COND
-				((> N 3352)	;mayor a este numero se produce stackOverflow
-					"EROR: el numero suministrado supera el limite de ejecucion del programa"
-				)
 				((< N 0) ; el programa no considera la suma de numeros primos en "sentido negativo"
 					"ERROR: Esta funcion espera recibir como argumento un entero mayor o igual a 0."
 				)
@@ -173,7 +170,7 @@
 			(APPEND 
 				(addToALL (CAR L1) (permLex (DELETE (CAR L1) L2))) 
 				(permute (CDR L1) (reArrange (CAR L1) (DELETE (CAR L1) L2) (- (LIST-LENGTH L2) (- (LIST-LENGTH L1) 1))))
-			) 	
+			)
 		)
 	)
 )

@@ -4,21 +4,16 @@
 	(COND
 		((LISTP M) ; primero se verifica que M sea efectivamente una lista
 			(COND
-				((NOT (LISTP (CAR M))) ; luego se verifica que M sea una representacion valida de una matriz
+				((OR (NOT (LISTP (CAR M)))(NOT (matrix M (LIST-LENGTH (CAR M))))) ; luego, que M sea una representacion valida de una matriz
 					"ERROR: La lista ingresada no es una matriz."
 				)
-				((NULL (CDR M)) ; si M es una matriz de una unica fila, la traspuesta de M es M
-					M
-				)
-				(T ; caso general
+				(T ; si es una matriz valida comienza la ejecucion
 					(COND
-						((= (LIST-LENGTH M) 0) ; si M se redujo a 0 finaliza la trasposicion
+						((NULL (CAR M)) ; si M es vacia, la traspuesta de una matriz vacia es una matriz vacia
 							NIL
 						)
-						((NULL (CAR M)) ; verificacion que evita una recursion infinita, si en M se encuentra un NIL se asume que ese es el final de la matriz
-							NIL
-						)
-						(T ; caso recursivo que concatena la fila resultado de la instancia actual con el resultado de la siguiente instancia sobre M reducida en una fila
+						(T ; si no, la transpuesta de M es la concatenacion de la primer fila transpuesta con la transpuesta de M',
+							;siendo M' M sin el primer elemento de cada fila
 							(CONS (compRow M) (trans (reduceMatrix M)))
 						)
 					)
@@ -38,7 +33,8 @@
 		((NULL M) ; si M es vacia, una fila traspuesta de una matriz vacia es una fila vacia
 			NIL
 		)
-		(T ; en caso contrario se concatena el primer elemento de la primer fila de la instancia actual de M, con el primer elemento de la primer fila de la instancia siguiente con M reducida en una fila
+		(T ; si no, se concatena el primer elemento de la primer fila M, 
+			;con la fila fila resultante de aplicar compRow sobre M', siendo M' el cuerpo de M
 			(CONS (CAR (CAR M)) (compRow (CDR M)))
 		)
 	)
@@ -47,11 +43,42 @@
 ; Funcion auxiliar que, dada una matriz M representada como lista de listas, elimina el primer elemento de cada fila
 (DEFUN reduceMatrix (M)
 	(COND
-		((NULL M) ; si M es vacia no necesito continuar reduciendo, devuelvo vacio
+		((NULL M) ; si M es vacia su reduccion es vacio
 			NIL
 		) 
-		(T ; caso contrario la reduccion de M es el resultado de concatenar la primer fila de M sin su primer elemento, con la reduccion sobre el cuerpo de M
+		(T ; si no, la reduccion de M es el resultado de concatenar la primer fila de M sin su primer elemento, 
+			;con la reduccion de M', siendo M' el cuerpo de M
 			(CONS (CDR (CAR M)) (reduceMatrix (CDR M)))
+		)
+	)
+)
+
+; Funcion auxiliar que verifica que la matriz pasado por parametro cumple con la condicion de tener siempre 
+; el mismo numero de columnas en todas sus filas
+; M es la matriz que se desea verificar
+; I es la cantidad de columnas en la primer fila de M
+(DEFUN matrix (M I)
+	(COND 
+		((= (LIST-LENGTH M) 1) ; si resta un unico elemento de en la matriz
+			(COND
+				((= (LIST-LENGTH (CAR M)) I) ; se verifica que el largo de ese elemento coincide con el inicial
+					T
+				)
+				(T ; si no lo es, M no era una matriz en un principio
+					NIL
+				)
+			)
+		)
+		(T ; si hay mas de un unico elemento en M 
+			(COND
+				((= (LIST-LENGTH (CAR M)) I) ; en caso de que coincidan el largo de la primer fila y el largo de la cabeza, 
+											;M sera una matriz <=> M', siendo M' M sin su primer fila, es una matriz
+					(matrix (CDR M) I)
+				)
+				(T ; si no, M no era una matriz
+					NIL
+				)
+			)
 		)
 	)
 )
@@ -127,7 +154,7 @@
 				)
 			)
 		)
-		(T
+		(T ; si el parámetro no es una lista no tiene sentido la función
 			"ERROR: Esta funcion espera recibir por parametro una lista."
 		)
 	)

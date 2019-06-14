@@ -165,7 +165,8 @@
 		((= (LIST-LENGTH L1) 0) ; si no restan elementos por permutar el resultado de la permutacion es vacio
 			NIL
 		)
-		(T ; caso contrario la permutacion lexica de una lista L es el resultado de concatenar la cabeza de L a las permutaciones lexicas del cuerpo
+		(T ; caso contrario la permutacion lexica de una lista L es el resultado de concatenar la cabeza de L 
+			;a las permutaciones lexicas del cuerpo
 			;y formar una lista entro esto y las permutaciones lexicas del resto de L
 			(APPEND 
 				(addToALL (CAR L1) (permLex (DELETE (CAR L1) L2))) 
